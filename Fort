@@ -1,0 +1,235 @@
+local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/vvhoy884ugvv/hgcdghcvjh/refs/heads/main/sfvd.txt'))()
+
+local Window = Rayfield:CreateWindow({
+   Name = "🐉Hydra.VIP🐉",
+   LoadingTitle = "Made By HydraX",
+   LoadingSubtitle = "By HydraX",
+   ConfigurationSaving = {
+      Enabled = true,
+      FolderName = nil,
+      FileName = "HydraVIP"
+   },
+   Discord = {
+      Enabled = true,
+      Invite = "dvdge._",
+      RememberJoins = true
+   },
+   -- تغيير ألوان الواجهة
+   BackgroundColor = Color3.fromRGB(255, 255, 255),  -- خلفية بيضاء
+   TextColor = Color3.fromRGB(0, 0, 0)  -- نص أسود
+})
+
+Rayfield:Notify({
+   Title = "🐉Hydra.VIP🐉 INJECTED",
+   Content = "Thank you so much for using my script!",
+   Duration = 6.5,
+   Image = 448362458,
+   Actions = {
+      Ignore = {
+         Name = "Close",
+         Callback = function()
+         print("Notification closed")
+      end
+   },
+},
+})
+
+local AimbotTab = Window:CreateTab("🐉Aimbot", 448362458)
+local AimbotSection = AimbotTab:CreateSection("Aimbot")
+
+-- إضافة الخيارات من السكربت الذي اشتريته
+AimbotTab:CreateToggle({
+   Name = "Silent Aim",
+   Callback = function(value)
+      _G.silentAim = value
+      print("Silent Aim: " .. tostring(value))
+   end
+})
+
+AimbotTab:CreateToggle({
+   Name = "Infinite Ammo",
+   Callback = function(value)
+      _G.infiniteAmmo = value
+      print("Infinite Ammo: " .. tostring(value))
+   end
+})
+
+AimbotTab:CreateToggle({
+   Name = "No Recoil",
+   Callback = function(value)
+      _G.noRecoil = value
+      print("No Recoil: " .. tostring(value))
+   end
+})
+
+AimbotTab:CreateToggle({
+   Name = "No Spread",
+   Callback = function(value)
+      _G.noSpread = value
+      print("No Spread: " .. tostring(value))
+   end
+})
+
+AimbotTab:CreateToggle({
+   Name = "Fast Guns",
+   Callback = function(value)
+      _G.fastFire = value
+      print("Fast Guns: " .. tostring(value))
+   end
+})
+
+AimbotTab:CreateToggle({
+   Name = "Automatic Guns",
+   Callback = function(value)
+      _G.autoGuns = value
+      print("Automatic Guns: " .. tostring(value))
+   end
+})
+
+-- قسم Killall
+local KillallTab = Window:CreateTab("🐉Killall", 448362458)  -- قسم خاص للـ Killall
+local KillallSection = KillallTab:CreateSection("Killall")
+
+KillallTab:CreateButton({
+   Name = "Killall V1", -- اسم الزر
+   Callback = function()
+      -- تحذير بأن السكربت غير موثق
+      print("WARNING: Heads up! This script has not been verified by ScriptBlox. Use at your own risk!")
+
+      -- إعدادات السلاح
+      getgenv().Settings = {
+          gun = "Sniper", -- Sniper
+      }
+
+      -- التأكد من أن السلاح موجود في شخصية اللاعب
+      if not game.Players.LocalPlayer.Character:FindFirstChild(Settings.gun) then
+          game.Players.LocalPlayer.Character.Humanoid:EquipTool(game.Players.LocalPlayer.Backpack[Settings.gun])
+      end
+
+      -- إطلاق النار على اللاعبين الآخرين
+      for i, v in next, game.Players:GetPlayers() do
+          if v.Name ~= game.Players.LocalPlayer.Name then
+              game:GetService("ReplicatedStorage").WeaponsSystem.Network.WeaponHit:FireServer(game.Players.LocalPlayer.Character[Settings.gun], {
+                  ["p"] = v.Character.Head.Position,
+                  ["pid"] = 1,
+                  ["part"] = v.Character.Head,
+                  ["d"] = 500,
+                  ["maxDist"] = 500,
+                  ["h"] = v.Character.Humanoid,
+                  ["m"] = Enum.Material.Plastic,
+                  ["n"] = Vector3.new(-0.9637810587882996, -0.046888358891010284, -0.2625408172607422),
+                  ["t"] = 0.15185665205004445,
+                  ["sid"] = 32,
+              })
+          end
+      end
+   end
+})
+
+local ESPTab = Window:CreateTab("🐉ESP", 448362458)
+local ESPSection = ESPTab:CreateSection("ESP")
+
+-- إضافة النص الخاص بـ ESP V1
+ESPTab:CreateButton({
+   Name = "ESP V1", -- اسم الزر
+   Callback = function()
+      loadstring(game:HttpGet('https://raw.githubusercontent.com/Lucasfin000/SpaceHub/main/UESP'))()
+      print("ESP V1 activated!")
+   end
+})
+
+local ContributorsTab = Window:CreateTab("🐉Contributors", 448362458)  -- تم تغيير اسم هذا القسم
+local ContributorsSection = ContributorsTab:CreateSection("Contributors")
+
+-- إضافة الزر الذي ينسخ الرابط عند الضغط عليه
+ContributorsTab:CreateButton({
+   Name = "1. S7 SUF",
+   Callback = function()
+      setclipboard("https://youtube.com/@s7_suf?si=3MlB8N_DkeJKu5Jj")
+      print("Link copied to clipboard!")
+   end
+})
+
+-- تعديل وظائف الأوامر بناءً على القيم
+local weaponSystem = require(game:service'ReplicatedStorage'.WeaponsSystem.Libraries.BaseWeapon)
+
+local oldFire = weaponSystem.fire
+local oldGetConfigValue = weaponSystem.getConfigValue
+local oldUseAmmo = weaponSystem.useAmmo
+local oldGetAmmo = weaponSystem.getAmmoInWeapon
+
+local function getClosestPlayer()
+    local final = nil
+    local maxRange = math.huge
+
+    for i, player in next, game:GetService('Players'):GetPlayers() do
+        if player == game.Players.LocalPlayer then continue end
+        if not player.Character then continue end
+
+        local humanoid = player.Character:FindFirstChild('Humanoid')
+        local head = player.Character:FindFirstChild('Head')
+
+        if not head or not humanoid then continue end
+        if humanoid.Health <= 0 then continue end
+
+        local vector, visible = workspace.CurrentCamera:WorldToViewportPoint(head.Position)
+        if not visible then continue end
+
+        local cursorPosition = game:GetService('UserInputService'):GetMouseLocation()
+        local screenPosition = Vector2.new(vector.X, vector.Y)
+
+        local difference = math.floor((screenPosition - cursorPosition).magnitude)
+        if difference < maxRange then
+            maxRange = difference
+            final = head
+        end
+    end
+    return final
+end
+
+function weaponSystem.getAmmoInWeapon(self, ...)
+    local arguments = {...}
+    if _G.infiniteAmmo then return 9e9 end
+    return oldGetAmmo(self, unpack(arguments))
+end
+
+function weaponSystem.fire(self, ...)
+    local arguments = {...}
+
+    if _G.silentAim then
+        local t = getClosestPlayer()
+        if t then
+            arguments[2] = (t.Position - arguments[1]).unit
+            arguments[3] = 1
+        end
+    end
+
+    return oldFire(self, unpack(arguments))
+end
+
+function weaponSystem.getConfigValue(self, ...)
+    local arguments = {...}
+
+    if _G.fastFire and arguments[1] == 'ShotCooldown' then
+        return 0.01
+    elseif _G.autoGuns and arguments[1] == 'FireMode' then
+        return 'Automatic'
+    elseif _G.noRecoil and (arguments[1] == 'RecoilMin' or arguments[1] == 'RecoilMax') then
+        return 0
+    elseif _G.noSpread and (arguments[1] == 'MinSpread' or arguments[1] == 'MaxSpread') then
+        return 0
+    end
+
+    return oldGetConfigValue(self, unpack(arguments))
+end
+
+function weaponSystem.useAmmo(self, ...)
+    local arguments = {...}
+    if _G.infiniteAmmo then
+        if self.ammoInWeaponValue then
+            return 1
+        end
+    end
+
+    return oldUseAmmo(self, unpack(arguments))
+end
